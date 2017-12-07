@@ -1,65 +1,26 @@
-# 273 Lab 2 - Kafka and MongoDB
+# 273 Lab 3 - Spring x React x Dropbox
 
-## 🚀 Migrating previous Lab 1 MySQL Database structure to MongoDB
+## 🚀 Client is using React.js
 
-## 💀 Client and Server should communicate via Kafka Streams
+## 💀 Server is using Spring Framework
 
 # Dropbox 🗳️
 
 ## How to run the application 🏃‍
 
-Please follow these 2 steps.
+### Start all three servers 🏁
 
-### 1. Start Kafka Broker 
-
+1. Spring Backend Server 
 ```
-// on your terminal
-$ cd kafka_2.11-0.11.0.1
+// Start MongoDB server
+$ mongod
 
-
-// start zookeper
-$ bin/zookeeper-server-start.sh config/zookeeper.properties
-
-
-// start kafka server
-$ bin/kafka-server-start.sh config/server.properties
-
-
-// create 2 topics
-// request_topic and response_topic
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic request_topic
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic response_topic
-
-
-// see the topics that has been created
-$ bin/kafka-topics.sh --list --zookeeper localhost:2181
+$ cd spring_server
+$ 
 
 ```
 
-### 2. Start all three servers 🏁
-1.  Kafka Backend Server
-```
-$ cd kafka-back-end
-$ yarn install
-
-$ yarn start
-```
-
-
-2. Express.js Backend Server 
-```
-$ cd server
-$ yarn install
-
-// MySQL database
-// In most case, you need to create a database manually.
-// Please change the db config accordingly, for example: username, password, db name,
-$ sequelize db:migrate
-
-$ yarn start
-```
-
-3. React.js Client Server
+2. React.js Client Server
 ```
 $ cd client
 $ yarn install
