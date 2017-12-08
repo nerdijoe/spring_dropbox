@@ -1,6 +1,5 @@
 package com.dropbox.controller;
 
-
 import com.dropbox.model.Users;
 import com.dropbox.repository.UserRepository;
 import com.dropbox.service.UserService;
@@ -13,35 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
 
 @Controller
 @CrossOrigin(origins = "http://localhost:3001")
 @RestController
-@RequestMapping(path="/users")
-public class UserController {
+@RequestMapping(path="/auth")
+public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
-
-    @GetMapping(path="/all",produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Iterable<Users> findAll() {
-//        repository.save(new Users("James", "Harden", "harden@rockets.com", "haha"));
-//        repository.save(new Users("LeBron", "James", "lebron@cavs.com", "haha"));
-
-        // This returns a JSON with the users
-        return userService.getAllUsers();
-    }
-
-    @GetMapping(path="/{name}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Users findByFirstName(@PathVariable("name") String name) {
-        // This returns a JSON with the users
-        return userService.findByFirstname(name);
-    }
 
     @PostMapping(path="/signin",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Users login(@RequestBody String body, HttpSession session)
@@ -69,7 +51,6 @@ public class UserController {
         System.out.println("Saved");
         return new ResponseEntity(null,HttpStatus.CREATED);
     }
-
 
 
 }
