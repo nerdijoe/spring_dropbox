@@ -26,7 +26,7 @@ public class Users {
 
     @Override
     public String toString() {
-        return String.format("User[id=%s, firstname='%s', lastname='%s', , email='%s' , password='%s']", _id, firstname, lastname, email, password);
+        return String.format("User[_id=%s, firstname='%s', lastname='%s', email='%s' , password='%s']", _id, firstname, lastname, email, password);
     }
 
 }

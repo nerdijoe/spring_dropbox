@@ -13,6 +13,8 @@ public class UserService {
     private UserRepository userRepository;
 
     public Iterable<Users> getAllUsers() {
+        System.out.println("userRepository.findAll");
+        System.out.println(userRepository.findAll());
         return userRepository.findAll();
     }
 
