@@ -3,6 +3,7 @@ package com.dropbox.model;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,10 +31,13 @@ public class Folders {
         this.name = name;
         this.path = path;
         this.full_path = full_path;
+
         this.user = user;
+        this.users = new ArrayList<Users>();
 
         this.is_starred = false;
         this.is_deleted = false;
+
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }

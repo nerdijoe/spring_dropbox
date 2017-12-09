@@ -2,6 +2,7 @@ package com.dropbox.model;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class Files {
         this.aws_s3_path = aws_s3_path;
 
         this.user = user;
+        this.users = new ArrayList<Users>();
 
         this.type = type;
         this.size = size;
