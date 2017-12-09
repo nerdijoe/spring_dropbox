@@ -1,10 +1,13 @@
 package com.dropbox.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import com.dropbox.model.Files;
 import com.dropbox.model.Folders;
 import com.dropbox.model.Users;
+import com.dropbox.service.FileService;
 import com.dropbox.service.FolderService;
 import com.dropbox.service.UserService;
 import io.jsonwebtoken.Jwts;
@@ -41,6 +44,9 @@ public class FileUploadController {
 
     @Autowired
     FolderService folderService;
+
+    @Autowired
+    FileService fileService;
 
     @Autowired
     public FileUploadController(StorageService storageService) {
@@ -123,7 +129,7 @@ public class FileUploadController {
 ////    @CrossOrigin(origins = { "*" })
 //    @SuppressWarnings("unchecked")
     @PostMapping(value = "/{currentPath}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public @ResponseBody String handleFileUpload(@RequestHeader(value="token") String token, @RequestParam("file") MultipartFile file, @PathVariable("currentPath") String currentPath) {
+    public Files handleFileUpload(@RequestHeader(value="token") String token, @RequestParam("file") MultipartFile file, @PathVariable("currentPath") String currentPath) {
         System.out.println("POST uploads heyoooo");
 
         String decodedString = "";
@@ -141,6 +147,36 @@ public class FileUploadController {
 
             System.out.println(userId);
 
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+            // get currentPath folder
+            // get file name
+
+            System.out.println("POST uploads");
+            System.out.println(file);
+            System.out.println(file.getName());
+            System.out.println(file.getOriginalFilename());
+            System.out.println(file.getContentType());
+            System.out.println(file.getSize());
+
+
+            String dir = "./public/uploads/" + decoded.getString("email");
+            Folders folder = folderService.findById(currentPath);
+            System.out.println("-----");
+            System.out.println(folder);
+            if(folder != null) {
+                dir = folder.getFull_path();
+            }
+            String full_path = dir + "/" + file.getOriginalFilename();
+            String size = Long.toString(file.getSize());
+
+            Files newFile = fileService.addFile(file.getOriginalFilename(), dir, full_path, "", file.getContentType(), size, user);
+            storageService.store(file);
+//        redirectAttributes.addFlashAttribute("message",
+//                "You successfully uploaded " + file.getOriginalFilename() + "!");
+
+            return newFile;
 
         } catch (SignatureException e) {
 
@@ -148,14 +184,9 @@ public class FileUploadController {
             System.out.println("jwt decode error xxxxxxxx");
             System.out.println(e);
             System.out.println("Error----");
+
+            return null;
         }
-
-        System.out.println("POST uploads");
-        storageService.store(file);
-//        redirectAttributes.addFlashAttribute("message",
-//                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
-        return "redirect:/";
     }
 
 

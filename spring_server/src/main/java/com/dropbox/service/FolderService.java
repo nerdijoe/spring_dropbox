@@ -25,6 +25,10 @@ public class FolderService {
         return folderRepository.findAll();
     }
 
+    public Folders findById(String id) {
+        return folderRepository.findById(id);
+    }
+
     public Iterable<Folders> findByUser(Users user) {
 //        System.out.println(activityRepository.findAll());
         return folderRepository.findByUser(user);
