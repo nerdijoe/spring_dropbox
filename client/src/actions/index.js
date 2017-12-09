@@ -282,10 +282,12 @@ export const axiosUploadToPath = (data, currentPath) => (dispatch) => {
   console.log('axiosUploadToPath get token=', token);
   console.log("currentPath", currentPath);
   console.log("data", data);
-  
+  console.log("ijoooooo");
   axios.post(`http://localhost:3000/uploads/${currentPath}`, data, {
     headers: {
       token,
+      // 'Access-Control-Allow-Origin': '*',
+      'content-type': 'multipart/form-data',
     },
   }).then((res) => {
     console.log('axiosUploadToPath');

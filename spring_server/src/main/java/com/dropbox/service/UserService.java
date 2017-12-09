@@ -22,6 +22,27 @@ public class UserService {
         return userRepository.findByFirstname(name);
     }
 
+    public Users findById(String id) {
+        return userRepository.findById(id);
+    }
+
+    public Users findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+
+    public Iterable<Users> findByEmails(String users) {
+        String[] emails = users.split("[,]\\s+");
+        System.out.println(emails);
+        Iterable<Users> result =  userRepository.findByEmails(emails);
+        System.out.println("looping the iterable users...");
+        for( Users u: result) {
+            System.out.println(u);
+        }
+        return result;
+    }
+
+
     public void addUser(Users user){
         userRepository.save(user);
     }
