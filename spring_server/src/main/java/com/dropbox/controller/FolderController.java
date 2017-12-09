@@ -155,4 +155,93 @@ public class FolderController {
 
         }
     }
+
+    @PostMapping(path="/share",consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
+    public Folders addFolderSharing (@RequestHeader(value="token") String token, @RequestBody String body) {
+        // @ResponseBody means the returned String is the response, not a view name
+        // @RequestParam means it is a parameter from the GET or POST request
+
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+
+
+            JSONObject jsonObject = new JSONObject(body);
+
+            String users = jsonObject.getString("users");
+            String folder_id = jsonObject.getString("folder_id");
+            System.out.println("usersss");
+            System.out.println(users);
+            System.out.println("folder_id");
+            System.out.println(folder_id);
+
+            Folders updatedFolder = folderService.addFolderSharing(users, folder_id);
+            return updatedFolder;
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return null;
+
+        }
+    }
+
+    @PutMapping(path="/share",consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
+    public Folders removeFolderSharing (@RequestHeader(value="token") String token, @RequestBody String body) {
+        // @ResponseBody means the returned String is the response, not a view name
+        // @RequestParam means it is a parameter from the GET or POST request
+
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+
+
+            JSONObject jsonObject = new JSONObject(body);
+
+            String user_id = jsonObject.getString("user_id");
+            String folder_id = jsonObject.getString("folder_id");
+            System.out.println("usersss");
+            System.out.println(user_id);
+            System.out.println("folder_id");
+            System.out.println(folder_id);
+
+            Folders updatedFolder = folderService.removeFolderSharing(user_id, folder_id);
+            return updatedFolder;
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return null;
+
+        }
+
+    }
 }

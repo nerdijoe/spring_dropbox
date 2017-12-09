@@ -13,4 +13,10 @@ public interface UserRepository extends MongoRepository<Users, String> {
 
     @Query("{ '_id': ?0 }")
     public Users findById(String id);
+
+    @Query("{ 'email': ?0 }")
+    public Users findByEmail(String email);
+
+    @Query("{ 'email': { '$in': ?0 }}")
+    public Iterable<Users> findByEmails(String[] emails);
 }
