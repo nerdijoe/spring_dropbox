@@ -25,3 +25,6 @@ nbdist/
 
 # misc
 .DS_Store
+
+# properties
+src/main/resources/application.properties
