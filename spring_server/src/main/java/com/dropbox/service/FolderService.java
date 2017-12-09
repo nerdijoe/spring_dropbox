@@ -98,7 +98,7 @@ public class FolderService {
                 break;
             }
         }
-        
+
         System.out.println("After removing user");
         System.out.println(updatedFolder);
 
