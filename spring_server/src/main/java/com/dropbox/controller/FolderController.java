@@ -74,4 +74,44 @@ public class FolderController {
         }
     }
 
+    @PutMapping(path="/star",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Boolean starFolder(@RequestHeader(value="token") String token, @RequestBody String body) {
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+//            System.out.println(userId);
+//            Users user = userService.findById(decoded.getString("_id"));
+//            System.out.println("Who is user ....");
+//            System.out.println(user);
+
+//            return folderService.findByUser(user);
+
+            JSONObject jsonObject = new JSONObject(body);
+            System.out.println("Star Folder......");
+            System.out.println(jsonObject);
+            String folderId = jsonObject.getString("_id");
+            folderService.starFolder(folderId);
+            return true;
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return false;
+
+        }
+    }
 }

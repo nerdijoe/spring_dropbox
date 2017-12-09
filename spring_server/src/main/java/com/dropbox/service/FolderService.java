@@ -31,6 +31,17 @@ public class FolderService {
         return newFolder;
     }
 
+    public void starFolder(String id) {
+        Folders updatedFolder = folderRepository.findById(id);
+        Boolean star_status = updatedFolder.getIs_starred();
+        if(star_status) {
+            updatedFolder.setIs_starred(Boolean.FALSE);
+        } else {
+            updatedFolder.setIs_starred(Boolean.TRUE);
+        }
+
+        folderRepository.save(updatedFolder);
+    }
 
 
 
