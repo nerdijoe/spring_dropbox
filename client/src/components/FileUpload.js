@@ -43,7 +43,7 @@ class FileUpload extends Component {
   handleFileUpload(e) {
     const payload = new FormData();
 
-    payload.append('doc', e.target.files[0]);
+    payload.append('file', e.target.files[0]);
     console.log('payload ---->', payload);
     // this.props.axiosUpload(payload);
 
@@ -77,9 +77,9 @@ class FileUpload extends Component {
             <Icon name='cloud upload' /><span>  </span>
             Upload a file
           </label>
-          <Form encType="multipart/form-data">
+          {/* <Form encType="multipart/form-data"> */}
             <Input type="file" name="file" id="file" style={styles.myinput} onChange={(e) => { this.handleFileUpload(e); }} />
-          </Form>
+          {/* </Form> */}
         </div>
 
       </Container>

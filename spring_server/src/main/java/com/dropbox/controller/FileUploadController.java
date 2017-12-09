@@ -1,10 +1,13 @@
 package com.dropbox.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import com.dropbox.model.Files;
 import com.dropbox.model.Folders;
 import com.dropbox.model.Users;
+import com.dropbox.service.FileService;
 import com.dropbox.service.FolderService;
 import com.dropbox.service.UserService;
 import io.jsonwebtoken.Jwts;
@@ -32,7 +35,7 @@ import com.dropbox.storage.StorageService;
 @RestController
 //@Controller
 @CrossOrigin(origins = "http://localhost:3001")
-@RequestMapping(path="/")
+@RequestMapping(path="/uploads")
 public class FileUploadController {
     private final StorageService storageService;
 
@@ -41,6 +44,9 @@ public class FileUploadController {
 
     @Autowired
     FolderService folderService;
+
+    @Autowired
+    FileService fileService;
 
     @Autowired
     public FileUploadController(StorageService storageService) {
@@ -71,7 +77,7 @@ public class FileUploadController {
     }
 
 
-    @PostMapping(path="uploads/createfolder",consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
+    @PostMapping(path="/createfolder",consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
     public Folders addNewFolder (@RequestHeader(value="token") String token, @RequestBody String body) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
@@ -96,7 +102,10 @@ public class FileUploadController {
 
 
             JSONObject jsonObject = new JSONObject(body);
-            Folders newFolder = folderService.addFolder(jsonObject.getString("name"), "test", "localhost:3000/test", user);
+            String newDirName = jsonObject.getString("name");
+            String path = jsonObject.getString("currentPath");
+            String full_path = path + "/" + newDirName;
+            Folders newFolder = folderService.addFolder(newDirName, path, full_path, user);
             System.out.println("Folder Saved");
 //            return new ResponseEntity(null, HttpStatus.CREATED);
             return newFolder;
@@ -114,12 +123,13 @@ public class FileUploadController {
 
     }
 
-    @CrossOrigin(origins = { "*" },
-            methods={RequestMethod.POST, RequestMethod.OPTIONS},
-            allowedHeaders={"Origin", "X-Requested-With", "content-type", "Accept", "Access-Control-Allow-Origin", "token"})
-    @PostMapping(value = "/uploads/{currentPath}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String handleFileUpload(@RequestHeader(value="token") String token, @RequestParam("file") MultipartFile file, @PathVariable("currentPath") Integer currentPath,
-                                   RedirectAttributes redirectAttributes) {
+//    @CrossOrigin(origins = { "*" },
+//            methods={RequestMethod.POST, RequestMethod.OPTIONS},
+//            allowedHeaders={"Origin", "X-Requested-With", "content-type", "Accept", "Access-Control-Allow-Origin", "token"})
+////    @CrossOrigin(origins = { "*" })
+//    @SuppressWarnings("unchecked")
+    @PostMapping(value = "/{currentPath}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Files handleFileUpload(@RequestHeader(value="token") String token, @RequestParam("file") MultipartFile file, @PathVariable("currentPath") String currentPath) {
         System.out.println("POST uploads heyoooo");
 
         String decodedString = "";
@@ -137,6 +147,36 @@ public class FileUploadController {
 
             System.out.println(userId);
 
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+            // get currentPath folder
+            // get file name
+
+            System.out.println("POST uploads");
+            System.out.println(file);
+            System.out.println(file.getName());
+            System.out.println(file.getOriginalFilename());
+            System.out.println(file.getContentType());
+            System.out.println(file.getSize());
+
+
+            String dir = "./public/uploads/" + decoded.getString("email");
+            Folders folder = folderService.findById(currentPath);
+            System.out.println("-----");
+            System.out.println(folder);
+            if(folder != null) {
+                dir = folder.getFull_path();
+            }
+            String full_path = dir + "/" + file.getOriginalFilename();
+            String size = Long.toString(file.getSize());
+
+            Files newFile = fileService.addFile(file.getOriginalFilename(), dir, full_path, "", file.getContentType(), size, user);
+            storageService.store(file);
+//        redirectAttributes.addFlashAttribute("message",
+//                "You successfully uploaded " + file.getOriginalFilename() + "!");
+
+            return newFile;
 
         } catch (SignatureException e) {
 
@@ -144,33 +184,20 @@ public class FileUploadController {
             System.out.println("jwt decode error xxxxxxxx");
             System.out.println(e);
             System.out.println("Error----");
+
+            return null;
         }
-
-        System.out.println("POST uploads");
-        storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
-        return "redirect:/";
     }
 
 
-//    @SuppressWarnings("unchecked")
-//    @PostMapping(path="/uploadFile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // Map ONLY POST Requests
-//    public ResponseEntity<?> uploadFile(@RequestParam("uploadThis") MultipartFile file, @RequestParam("parentFolder") String parentFolder,
-//                                        @RequestParam("parentFolderPath") String parentFolderPath, @RequestParam("userId") String userId) {
-//
-//        List<String> tempList = new ArrayList<String>();
-//        String tempFileId = userId + String.valueOf(Calendar.getInstance().getTimeInMillis());
-//
-//        try {
-//            byte[] bytes = file.getBytes();
-//            ApplicationHome home = new ApplicationHome(this.getClass());
-//            Path path = Paths.get(home.getDir() + "\\files\\" + file.getOriginalFilename());
-//            Files.write(path, bytes);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    @PostMapping(value = "/ijo")
+    public @ResponseBody String handleFileUploadTest(@RequestParam("file") MultipartFile file) {
+        System.out.println("POST uploads tesssst");
+
+        storageService.store(file);
+
+        return "yeaaah";
+    }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
