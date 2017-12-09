@@ -77,7 +77,9 @@ class FileUpload extends Component {
             <Icon name='cloud upload' /><span>  </span>
             Upload a file
           </label>
-          <Input type="file" name="doc" id="file" style={styles.myinput} onChange={(e) => { this.handleFileUpload(e); }} />
+          <Form encType="multipart/form-data">
+            <Input type="file" name="file" id="file" style={styles.myinput} onChange={(e) => { this.handleFileUpload(e); }} />
+          </Form>
         </div>
 
       </Container>

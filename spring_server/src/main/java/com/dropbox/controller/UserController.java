@@ -53,6 +53,12 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping(path="/id/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Users findById(@PathVariable("id") String id) {
+        // This returns a JSON with the users
+        return userService.findById(id);
+    }
+
     @GetMapping(path="/{name}",produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Users findByFirstName(@PathVariable("name") String name) {
         // This returns a JSON with the users
