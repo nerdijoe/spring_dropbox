@@ -43,6 +43,17 @@ public class FolderService {
         folderRepository.save(updatedFolder);
     }
 
+    public void deleteFolder(String id) {
+        Folders updatedFolder = folderRepository.findById(id);
+        Boolean delete_status = updatedFolder.getIs_deleted();
+        if(delete_status) {
+            updatedFolder.setIs_deleted(Boolean.FALSE);
+        } else {
+            updatedFolder.setIs_deleted(Boolean.TRUE);
+        }
+
+        folderRepository.save(updatedFolder);
+    }
 
 
 }
