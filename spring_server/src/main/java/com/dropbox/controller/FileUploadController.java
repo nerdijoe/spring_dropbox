@@ -32,7 +32,7 @@ import com.dropbox.storage.StorageService;
 @RestController
 //@Controller
 @CrossOrigin(origins = "http://localhost:3001")
-@RequestMapping(path="/")
+@RequestMapping(path="/uploads")
 public class FileUploadController {
     private final StorageService storageService;
 
@@ -71,7 +71,7 @@ public class FileUploadController {
     }
 
 
-    @PostMapping(path="uploads/createfolder",consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
+    @PostMapping(path="/createfolder",consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
     public Folders addNewFolder (@RequestHeader(value="token") String token, @RequestBody String body) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
@@ -96,7 +96,10 @@ public class FileUploadController {
 
 
             JSONObject jsonObject = new JSONObject(body);
-            Folders newFolder = folderService.addFolder(jsonObject.getString("name"), "test", "localhost:3000/test", user);
+            String newDirName = jsonObject.getString("name");
+            String path = jsonObject.getString("currentPath");
+            String full_path = path + "/" + newDirName;
+            Folders newFolder = folderService.addFolder(newDirName, path, full_path, user);
             System.out.println("Folder Saved");
 //            return new ResponseEntity(null, HttpStatus.CREATED);
             return newFolder;
@@ -114,12 +117,13 @@ public class FileUploadController {
 
     }
 
-    @CrossOrigin(origins = { "*" },
-            methods={RequestMethod.POST, RequestMethod.OPTIONS},
-            allowedHeaders={"Origin", "X-Requested-With", "content-type", "Accept", "Access-Control-Allow-Origin", "token"})
-    @PostMapping(value = "/uploads/{currentPath}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String handleFileUpload(@RequestHeader(value="token") String token, @RequestParam("file") MultipartFile file, @PathVariable("currentPath") Integer currentPath,
-                                   RedirectAttributes redirectAttributes) {
+//    @CrossOrigin(origins = { "*" },
+//            methods={RequestMethod.POST, RequestMethod.OPTIONS},
+//            allowedHeaders={"Origin", "X-Requested-With", "content-type", "Accept", "Access-Control-Allow-Origin", "token"})
+////    @CrossOrigin(origins = { "*" })
+//    @SuppressWarnings("unchecked")
+    @PostMapping(value = "/{currentPath}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public @ResponseBody String handleFileUpload(@RequestHeader(value="token") String token, @RequestParam("file") MultipartFile file, @PathVariable("currentPath") String currentPath) {
         System.out.println("POST uploads heyoooo");
 
         String decodedString = "";
@@ -148,29 +152,21 @@ public class FileUploadController {
 
         System.out.println("POST uploads");
         storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
+//        redirectAttributes.addFlashAttribute("message",
+//                "You successfully uploaded " + file.getOriginalFilename() + "!");
 
         return "redirect:/";
     }
 
 
-//    @SuppressWarnings("unchecked")
-//    @PostMapping(path="/uploadFile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // Map ONLY POST Requests
-//    public ResponseEntity<?> uploadFile(@RequestParam("uploadThis") MultipartFile file, @RequestParam("parentFolder") String parentFolder,
-//                                        @RequestParam("parentFolderPath") String parentFolderPath, @RequestParam("userId") String userId) {
-//
-//        List<String> tempList = new ArrayList<String>();
-//        String tempFileId = userId + String.valueOf(Calendar.getInstance().getTimeInMillis());
-//
-//        try {
-//            byte[] bytes = file.getBytes();
-//            ApplicationHome home = new ApplicationHome(this.getClass());
-//            Path path = Paths.get(home.getDir() + "\\files\\" + file.getOriginalFilename());
-//            Files.write(path, bytes);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    @PostMapping(value = "/ijo")
+    public @ResponseBody String handleFileUploadTest(@RequestParam("file") MultipartFile file) {
+        System.out.println("POST uploads tesssst");
+
+        storageService.store(file);
+
+        return "yeaaah";
+    }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
