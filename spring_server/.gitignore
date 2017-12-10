@@ -28,3 +28,5 @@ nbdist/
 
 # properties
 src/main/resources/application.properties
+
+upload-dir/

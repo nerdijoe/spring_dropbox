@@ -2,11 +2,13 @@ package com.dropbox.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import com.dropbox.model.Files;
 import com.dropbox.model.Folders;
 import com.dropbox.model.Users;
+import com.dropbox.s3.S3Wrapper;
 import com.dropbox.service.FileService;
 import com.dropbox.service.FolderService;
 import com.dropbox.service.UserService;
@@ -52,6 +54,9 @@ public class FileUploadController {
     public FileUploadController(StorageService storageService) {
         this.storageService = storageService;
     }
+
+    @Autowired
+    private S3Wrapper s3Wrapper;
 
     @Value("${jwt.secret}")
     public String SECRET;
@@ -169,10 +174,21 @@ public class FileUploadController {
                 dir = folder.getFull_path();
             }
             String full_path = dir + "/" + file.getOriginalFilename();
+
+            String user_email = decoded.getString("email");
+            String aws_s3_path = "https://s3-us-west-2.amazonaws.com/dropbox-kafka/" + user_email + "/" + file.getOriginalFilename();
+
             String size = Long.toString(file.getSize());
 
-            Files newFile = fileService.addFile(file.getOriginalFilename(), dir, full_path, "", file.getContentType(), size, user);
+            Files newFile = fileService.addFile(file.getOriginalFilename(), dir, full_path, aws_s3_path, file.getContentType(), size, user);
             storageService.store(file);
+
+            System.out.println("s3 babyyy-----");
+//            MultipartFile[] files = ;
+            s3Wrapper.uploadOne(file, user_email);
+
+            System.out.println("-----");
+
 //        redirectAttributes.addFlashAttribute("message",
 //                "You successfully uploaded " + file.getOriginalFilename() + "!");
 
