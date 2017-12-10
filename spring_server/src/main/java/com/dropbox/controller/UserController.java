@@ -1,11 +1,15 @@
 package com.dropbox.controller;
 
 
+import com.dropbox.model.Abouts;
 import com.dropbox.model.Activities;
+import com.dropbox.model.Interests;
 import com.dropbox.model.Users;
 import com.dropbox.repository.ActivityRepository;
 import com.dropbox.repository.UserRepository;
+import com.dropbox.service.AboutService;
 import com.dropbox.service.ActivityService;
+import com.dropbox.service.InterestService;
 import com.dropbox.service.UserService;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -39,6 +43,12 @@ public class UserController {
 
     @Autowired
     private ActivityService activityService;
+
+    @Autowired
+    private AboutService aboutService;
+
+    @Autowired
+    private InterestService interestService;
 
     @Value("${jwt.secret}")
     public String SECRET;
@@ -256,5 +266,160 @@ public class UserController {
         return activityService.findByUser("ddddd");
     }
 
+    @GetMapping(path="/about",produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Abouts getAbout(@RequestHeader(value="token") String token) {
+        String decodedString = "";
+        try {
 
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+
+            return aboutService.findByUser(user);
+
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return null;
+
+        }
+    }
+
+    @PutMapping(path="/about",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Boolean updateAbout(@RequestHeader(value="token") String token, @RequestBody String body) {
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+
+            JSONObject jsonObject = new JSONObject(body);
+            System.out.println("Update About ......");
+            System.out.println(jsonObject);
+            String overview = jsonObject.getString("overview");
+            String work = jsonObject.getString("work");
+            String education = jsonObject.getString("education");
+            String contact_info = jsonObject.getString("contact_info");
+            String life_events = jsonObject.getString("life_events");
+
+            aboutService.updateAbout(overview, work, education, contact_info, life_events, user);
+            return true;
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return false;
+
+        }
+    }
+
+    @GetMapping(path="/interest",produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Interests getInterest(@RequestHeader(value="token") String token) {
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+
+            return interestService.findByUser(user);
+
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return null;
+
+        }
+    }
+
+    @PutMapping(path="/interest",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Boolean updateInterest(@RequestHeader(value="token") String token, @RequestBody String body) {
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+
+            JSONObject jsonObject = new JSONObject(body);
+            System.out.println("Update About ......");
+            System.out.println(jsonObject);
+            String music = jsonObject.getString("music");
+            String shows = jsonObject.getString("shows");
+            String sports = jsonObject.getString("sports");
+            String fav_teams = jsonObject.getString("fav_teams");
+
+            interestService.updateInterest(music, shows, sports, fav_teams, user);
+            return true;
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return false;
+
+        }
+    }
 }

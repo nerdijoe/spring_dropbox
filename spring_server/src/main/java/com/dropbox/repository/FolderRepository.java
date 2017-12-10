@@ -12,6 +12,8 @@ import java.util.List;
 public interface FolderRepository extends MongoRepository<Folders, String> {
     public List<Folders> findByUser(Users user);
 
+    public List<Folders> findByUsers(Users user);
+
     @Query("{ '_id': ?0 }")
     public Folders findById(String id);
 }

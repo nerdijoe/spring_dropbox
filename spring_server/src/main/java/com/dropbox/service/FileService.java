@@ -28,6 +28,12 @@ public class FileService {
         return fileRepository.findByUser(user);
     }
 
+    public Iterable<Files> findByUsers(Users user) {
+//        System.out.println(activityRepository.findAll());
+        return fileRepository.findByUsers(user);
+    }
+
+
     public Files addFile(String name, String path, String full_path, String aws_s3_path, String type, String size, Users user){
         Files newFile = fileRepository.save(new Files(name, path, full_path, aws_s3_path, type, size, user));
 
