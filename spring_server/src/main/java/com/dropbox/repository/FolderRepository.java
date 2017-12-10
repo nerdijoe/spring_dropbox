@@ -16,4 +16,11 @@ public interface FolderRepository extends MongoRepository<Folders, String> {
 
     @Query("{ '_id': ?0 }")
     public Folders findById(String id);
+
+    @Query("{ 'path': ?0 }")
+    public List<Folders> findByPath(String path);
+
+    @Query("{ 'user': ?0, 'path': ?1 }")
+    public List<Folders> findByUserAndPath(Users user, String path);
+
 }

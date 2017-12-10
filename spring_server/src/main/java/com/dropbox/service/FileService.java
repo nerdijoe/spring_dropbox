@@ -29,8 +29,16 @@ public class FileService {
     }
 
     public Iterable<Files> findByUsers(Users user) {
-//        System.out.println(activityRepository.findAll());
         return fileRepository.findByUsers(user);
+    }
+
+    public List<Files> findByPath(String path) {
+        return fileRepository.findByPath(path);
+    }
+
+    public Iterable<Files> findByUserAndPath(Users user, String path) {
+//        System.out.println(activityRepository.findAll());
+        return fileRepository.findByUserAndPath(user, path);
     }
 
 
