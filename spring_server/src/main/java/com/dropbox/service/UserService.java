@@ -43,8 +43,9 @@ public class UserService {
     }
 
 
-    public void addUser(Users user){
-        userRepository.save(user);
+    public Users addUser(Users user){
+
+        return userRepository.save(user);
     }
 
     public Users login(String email,String password){

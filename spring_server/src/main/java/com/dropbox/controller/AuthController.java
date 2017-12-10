@@ -2,6 +2,8 @@ package com.dropbox.controller;
 
 import com.dropbox.model.Users;
 import com.dropbox.repository.UserRepository;
+import com.dropbox.service.AboutService;
+import com.dropbox.service.InterestService;
 import com.dropbox.service.UserService;
 //import com.dropbox.security.TokenHelper;
 import com.dropbox.security.TokenHelper;
@@ -27,6 +29,12 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AboutService aboutService;
+
+    @Autowired
+    private InterestService interestService;
 
     @Autowired
     private TokenHelper tokenHelper;
@@ -64,6 +72,13 @@ public class AuthController {
         System.out.println("jwtToken:");
         System.out.println(jwtToken);
 
+        if(aboutService.findByUser(loggedin) == null) {
+            aboutService.addAbout("", "", "", "", "", loggedin);
+        }
+        if(interestService.findByUser(loggedin) == null) {
+            interestService.addInterest("", "", "", "", loggedin);
+        }
+
 //        SigninResponse response = new SigninResponse(jwtToken, loggedin.firstname, loggedin.lastname, loggedin.email);
 //        return loggedin;
 
@@ -76,7 +91,10 @@ public class AuthController {
     public  ResponseEntity<?> addNewUser (@RequestBody Users user) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
-        userService.addUser(user);
+        Users newUser = userService.addUser(user);
+        aboutService.addAbout("", "", "", "", "", user);
+        interestService.addInterest("", "", "", "", user);
+
         System.out.println("Saved");
         return new ResponseEntity(null,HttpStatus.CREATED);
     }

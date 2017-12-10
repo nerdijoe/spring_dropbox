@@ -33,6 +33,12 @@ public class FolderService {
 //        System.out.println(activityRepository.findAll());
         return folderRepository.findByUser(user);
     }
+
+    public Iterable<Folders> findByUsers(Users user) {
+//        System.out.println(activityRepository.findAll());
+        return folderRepository.findByUsers(user);
+    }
+
     public Folders addFolder(String name, String path, String full_path, Users user){
         Folders newFolder = folderRepository.save(new Folders(name, path, full_path, user));
 

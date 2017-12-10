@@ -242,6 +242,40 @@ public class FolderController {
             return null;
 
         }
+    }
 
+    @GetMapping(path="/share",produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Iterable<Folders> getFolderSharing(@RequestHeader(value="token") String token) {
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+
+            return folderService.findByUsers(user);
+
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return null;
+
+        }
     }
 }
