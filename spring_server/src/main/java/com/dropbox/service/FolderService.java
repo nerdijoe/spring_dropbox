@@ -39,6 +39,17 @@ public class FolderService {
         return folderRepository.findByUsers(user);
     }
 
+    public List<Folders> findByPath(String path) {
+//        System.out.println(activityRepository.findAll());
+        return folderRepository.findByPath(path);
+    }
+
+    public Iterable<Folders> findByUserAndPath(Users user, String path) {
+//        System.out.println(activityRepository.findAll());
+        return folderRepository.findByUserAndPath(user, path);
+    }
+
+
     public Folders addFolder(String name, String path, String full_path, Users user){
         Folders newFolder = folderRepository.save(new Folders(name, path, full_path, user));
 

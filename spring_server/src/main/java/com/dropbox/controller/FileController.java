@@ -56,7 +56,14 @@ public class FileController {
             System.out.println("Who is user ....");
             System.out.println(user);
 
-            return fileService.findByUser(user);
+            String root = "./public/uploads/";
+            String email = decoded.getString("email");
+            String path = root + email;
+
+            System.out.println("root path ....");
+            System.out.println(path);
+
+            return fileService.findByUserAndPath(user, path);
 
 
         } catch (SignatureException e) {

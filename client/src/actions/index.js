@@ -410,7 +410,8 @@ export const axiosCreateFolderOnCurrentPath = (data, currentPath) => (dispatch) 
   const email = localStorage.getItem('user_email');
   console.log('axiosCreateFolder token=', token);
   console.log('axiosCreateFolder email=', email);
-
+  console.log('axiosCreateFolder currentPath=', currentPath);
+  
   axios.post('http://localhost:3000/uploads/createfolder', {
     name: data.folderName,
     currentPath,

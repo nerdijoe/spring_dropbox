@@ -1,8 +1,11 @@
 package com.dropbox.controller;
 
 
+import com.dropbox.model.Contents;
+import com.dropbox.model.Files;
 import com.dropbox.model.Folders;
 import com.dropbox.model.Users;
+import com.dropbox.service.FileService;
 import com.dropbox.service.FolderService;
 import com.dropbox.service.UserService;
 import io.jsonwebtoken.Jwts;
@@ -15,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @CrossOrigin(origins = "http://localhost:3001")
 @RestController
@@ -25,6 +30,9 @@ public class FolderController {
 
     @Autowired
     FolderService folderService;
+
+    @Autowired
+    FileService fileService;
 
     @Value("${jwt.secret}")
     public String SECRET;
@@ -60,7 +68,14 @@ public class FolderController {
             System.out.println("Who is user ....");
             System.out.println(user);
 
-            return folderService.findByUser(user);
+            String root = "./public/uploads/";
+            String email = decoded.getString("email");
+            String path = root + email;
+
+            System.out.println("root path ....");
+            System.out.println(path);
+//            return folderService.findByUser(user);
+            return folderService.findByUserAndPath(user, path);
 
 
         } catch (SignatureException e) {
@@ -267,6 +282,51 @@ public class FolderController {
 
             return folderService.findByUsers(user);
 
+
+        } catch (SignatureException e) {
+
+            //don't trust the JWT!
+            System.out.println("jwt decode error xxxxxxxx");
+            System.out.println(e);
+            System.out.println("Error----");
+            return null;
+
+        }
+    }
+
+    @GetMapping(path="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    Contents getContentsByFolderId(@RequestHeader(value="token") String token, @PathVariable("id") String id) {
+        String decodedString = "";
+        try {
+
+            decodedString = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+            System.out.println("activities jwt decode  ------------");
+            System.out.println(decodedString);
+            //OK, we can trust this JWT
+
+            JSONObject decoded = new JSONObject(decodedString);
+            System.out.println("decoded VVV");
+            System.out.println(decoded);
+            ObjectId userId = new ObjectId(decoded.getString("_id"));
+
+            System.out.println(userId);
+            Users user = userService.findById(decoded.getString("_id"));
+            System.out.println("Who is user ....");
+            System.out.println(user);
+
+            Folders folder = folderService.findById(id);
+            System.out.println("folder -------");
+            System.out.println(folder);
+
+            // get folder.fullpath
+            // find all usb folders findbypath
+            // find all files inside the parent folder findByPath
+            List<Files> files = fileService.findByPath(folder.getFull_path());
+            List<Folders> folders = folderService.findByPath(folder.getFull_path());
+
+            Contents content = new Contents(files, folders);
+
+            return content;
 
         } catch (SignatureException e) {
 

@@ -14,4 +14,10 @@ public interface FileRepository extends MongoRepository<Files, String> {
 
     @Query("{ '_id': ?0 }")
     public Files findById(String id);
+
+    @Query("{ 'path': ?0 }")
+    public List<Files> findByPath(String path);
+
+    @Query("{ 'user': ?0, 'path': ?1 }")
+    public List<Files> findByUserAndPath(Users user, String path);
 }
