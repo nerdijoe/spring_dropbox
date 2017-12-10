@@ -27,6 +27,6 @@ nbdist/
 .DS_Store
 
 # properties
-src/main/resources/application.properties
+src/main/resources/secret.properties
 
 upload-dir/
