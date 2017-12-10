@@ -1,22 +1,31 @@
-# 273 Lab 3 - Spring x React x Dropbox
+# Spring Boot x React x Dropbox
 
 ## 🚀 Client is using React.js
 
-## 💀 Server is using Spring Framework
+## 💀 Server is using Spring Boot Framework
+
 
 # Dropbox 🗳️
 
 ## How to run the application 🏃‍
 
-### Start all three servers 🏁
+### Start all servers 🏁
 
 1. Spring Backend Server 
 ```
 // Start MongoDB server
 $ mongod
 
+// you can start Spring boot server from your IntelliJ IDE
+// or
+// you can do this on terminal
 $ cd spring_server
-$ 
+$ mvn compile
+$ mvn package
+$ mvn install
+
+// start the server
+$ mvn spring-boot:run
 
 ```
 
