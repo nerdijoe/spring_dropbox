@@ -175,28 +175,8 @@ public class AuthController {
 
         String errorJson = String.format("{ \"message\": \"User and Password don't match.\" }" );
         ResponseEntity result = new ResponseEntity(errorJson,HttpStatus.FORBIDDEN);
-//        return new ResponseEntity(userService.login(jsonObject.getString("username"),jsonObject.getString("password")),HttpStatus.FORBIDDEN);
         System.out.println(result);
         return result;
-        // -----
-//        Users loggedin = userService.login(jsonObject.getString("email"),jsonObject.getString("password"));
-//        System.out.println((loggedin));
-//
-//        String jwtToken = tokenHelper.generateToken(loggedin);
-//        System.out.println("jwtToken:");
-//        System.out.println(jwtToken);
-//
-//
-//        if(aboutService.findByUser(loggedin) == null) {
-//            aboutService.addAbout("", "", "", "", "", loggedin);
-//        }
-//        if(interestService.findByUser(loggedin) == null) {
-//            interestService.addInterest("", "", "", "", loggedin);
-//        }
-
-//        return String.format("{ \"token\": \"%s\", \"firstname\": \"%s\",\"lastname\": \"%s\",\"email\": \"%s\",\"_id\": \"%s\" }", jwtToken, loggedin.firstname, loggedin.lastname, loggedin.email, loggedin._id );
-
-        // ----
 
     }
 
@@ -205,12 +185,18 @@ public class AuthController {
     public  ResponseEntity<?> addNewUser (@RequestBody Users user) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
-        Users newUser = userService.addUser(user);
-        aboutService.addAbout("", "", "", "", "", user);
-        interestService.addInterest("", "", "", "", user);
+        Users foundUser = userService.findByEmail(user.getEmail());
+        if(foundUser != null) {
+            String errorJson = String.format("{ \"message\": \"Email is already used. Please sign up using different email.\" }" );
+            return new ResponseEntity(errorJson,HttpStatus.OK);
+        } else {
+            Users newUser = userService.addUser(user);
+            aboutService.addAbout("", "", "", "", "", user);
+            interestService.addInterest("", "", "", "", user);
 
-        System.out.println("Saved");
-        return new ResponseEntity(null,HttpStatus.CREATED);
+            System.out.println("Saved");
+            return new ResponseEntity(null,HttpStatus.CREATED);
+        }
     }
 
 
