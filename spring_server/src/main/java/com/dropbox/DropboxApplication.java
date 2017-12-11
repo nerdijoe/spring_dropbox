@@ -11,6 +11,8 @@ import org.springframework.boot.CommandLineRunner;
 
 import com.dropbox.storage.StorageProperties;
 import com.dropbox.storage.StorageService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -30,6 +32,10 @@ public class DropboxApplication {
 		};
 	}
 
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 //	@Bean
 //	public FilterRegistrationBean corsFilter() {
 //		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

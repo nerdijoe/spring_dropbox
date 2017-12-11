@@ -3,6 +3,7 @@ package com.dropbox.service;
 import com.dropbox.model.Users;
 import com.dropbox.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,9 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Iterable<Users> getAllUsers() {
         System.out.println("userRepository.findAll");
@@ -44,7 +48,7 @@ public class UserService {
 
 
     public Users addUser(Users user){
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
