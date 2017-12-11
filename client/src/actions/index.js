@@ -146,12 +146,13 @@ export const signInErrorClear = () => {
 
 
 export const axiosSignIn = (data, router) => (dispatch) => {
-  axios.post('http://localhost:3000/auth/signin', {
+  axios.post('http://localhost:3000/auth/signinpremium', {
     email: data.email,
     password: data.password,
   }).then((res) => {
     // if signin is successful, then save the token in the local storage
     console.log('axiosSignIn done', res);
+    console.log('axiosSignIn res.data', res.data);
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('user_id', res.data._id);
     localStorage.setItem('user_email', res.data.email);
