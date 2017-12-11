@@ -12,13 +12,16 @@
 ### Start all servers 🏁
 
 1. Spring Backend Server 
+
+**Run spring boot server on port 3000**
+
 ```
 // Start MongoDB server
 $ mongod
 
 // you can start Spring boot server from your IntelliJ IDE
 // or
-// you can do this on terminal
+// you can do this on your terminal
 $ cd spring_server
 $ mvn compile
 $ mvn package
@@ -30,6 +33,9 @@ $ mvn spring-boot:run
 ```
 
 2. React.js Client Server
+
+**Run client server on port 3001**
+
 ```
 $ cd client
 $ yarn install
@@ -37,50 +43,6 @@ $ yarn install
 $ yarn start
 // open localhost:3001
 
-```
-
-
-## Testing 🛠️
-### Kafka Backend Sever
-
-Change the environment to test
-```
-// Line: 23, change this value from 'development' to 'test'
-const appEnv = 'test';
-
-// then run Kafka Backend
-cd kafka-back-end/
-yarn start
-```
-
-For DB provided connection pooling
-```
-// use this options on kafka-back-end/server.js
-//   see line 24
-const options = {
-  useMongoClient: true,
-  autoIndex: false, // Don't build indexes
-  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
-  reconnectInterval: 500, // Reconnect every 500ms
-  poolSize: 10, // Maintain up to 10 socket connections
-  // If not connected, return errors immediately rather than waiting for reconnect
-  bufferMaxEntries: 0,
-};
-
-```
-
-For custom connection pooling
-```
-// open kafka-back-end/services/files.js
-//  uncomment line 5 to 8
-//  and uncomment line 19-21, and use dbFile instead of File
-```
-
-### Express.js Backend Server
-
-```
-cd server/
-yarn test
 ```
 
 
@@ -134,6 +96,7 @@ yarn test
 | name     | String        |
 | path      | String        |
 | full_path         | String        |
+| aws_s3_path       | String        |
 | type      | String        |
 | size      | Integer        |
 | is_starred      | Boolean        |
@@ -186,7 +149,7 @@ POST - localhost:3000/auth/signup
 
 #### Sign In
 ```
-POST - localhost:3000/auth/signin
+POST - localhost:3000/auth/signinpremium
 ```
 | Field         |      |
 | --------------|:-------------:|
