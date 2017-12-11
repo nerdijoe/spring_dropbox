@@ -21,7 +21,7 @@ $ mongod
 
 // you can start Spring boot server from your IntelliJ IDE
 // or
-// you can do this on your terminal
+// you can do compile and run using Maven on your terminal
 $ cd spring_server
 $ mvn compile
 $ mvn package
